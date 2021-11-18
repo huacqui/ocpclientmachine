@@ -1,5 +1,5 @@
 ---
-- hosts: nexus
+- hosts: all
   vars:
     binaries_repositories: https://nexus.t.st/repository/ocp_raw_local
     vmware_ca: https://vcenter.lab.test.com.py/certs/download.zip
