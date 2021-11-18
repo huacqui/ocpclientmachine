@@ -1,0 +1,17 @@
+---
+- hosts: nexus
+  vars:
+    binaries_repositories: https://nexus.t.st/repository/ocp_raw_local
+    vmware_ca: https://vcenter.lab.test.com.py/certs/download.zip
+    #user_redhat:
+    #pass_redhat: 
+    #user_nexus: 
+    #pass_nexus: 
+    url_nexus: nexus.t.st
+    ocp_version: v4.8
+    proxy_env:
+      http_proxy: ""
+      https_proxy: ""
+      no_proxy: ""
+  roles:
+  - role: ocpclient

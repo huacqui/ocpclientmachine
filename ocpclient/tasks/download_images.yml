@@ -1,0 +1,44 @@
+---
+- name: Login Redhat 
+  shell: "podman login -u {{ user_redhat }} -p {{ pass_redhat }} registry.redhat.io"
+  environment: "{{ proxy_env }}"
+  
+- name: Login Nexus
+  shell: "podman login -u {{ user_nexus }} -p {{ pass_nexus }} {{ url_nexus }}"
+  environment: "{{ proxy_env }}"
+
+- name: Generate images efk
+  shell: "opm index prune -f registry.redhat.io/redhat/redhat-operator-index:{{ ocp_version }} -p elasticsearch-operator,cluster-logging -t {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }} && podman push {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }}"
+  environment: "{{ proxy_env }}"
+  register: efk
+  failed_when: 
+  - '"blob upload invalid: blob upload invalid" not in efk.stderr or efk.rc != 125' 
+  - efk.rc != 0
+
+- name: Generate images 3scale
+  shell: "opm index prune -f registry.redhat.io/redhat/redhat-operator-index:{{ ocp_version }} -p 3scale-operator,apicast-operator -t {{ url_nexus }}/olm/redhat-operator-index-3scale:{{ ocp_version }} && podman push {{ url_nexus }}/olm/redhat-operator-index-3scale:{{ ocp_version }}"
+  environment: "{{ proxy_env }}"
+  register: threescale
+  failed_when:
+  - '"blob upload invalid: blob upload invalid" not in threescale.stderr or threescale.rc != 125'
+  - threescale.rc !=0 
+
+- name: Generate images amq
+  shell: "opm index prune -f registry.redhat.io/redhat/redhat-operator-index:{{ ocp_version }} -p amq-broker,amq-broker-lts,amq-broker-rhel8,amq-online,amq-streams,amq7-cert-manager-operator,amq7-interconnect-operator,service-registry-operator -t {{ url_nexus }}/olm/redhat-operator-index-amq:{{ ocp_version }} && podman push {{ url_nexus }}/olm/redhat-operator-index-amq:{{ ocp_version }}"
+  environment: "{{ proxy_env }}"
+  register: amq
+  failed_when:
+  - '"blob upload invalid: blob upload invalid" not in amq.stderr or amq.rc != 125'
+  - amq.rc !=0
+
+- name: Copy images efk to nexus
+  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
+  environment: "{{ proxy_env }}"
+
+- name: Copy images 3scale to nexus
+  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-3scale:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
+  environment: "{{ proxy_env }}"
+
+- name: Copy images amq to nexus
+  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-amq:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
+  environment: "{{ proxy_env }}"

@@ -1,0 +1,27 @@
+---
+- name: Download and install binaries
+  unarchive:
+    src: "{{ binaries_repositories }}/{{ item }}"
+    dest: /usr/sbin
+    remote_src: True
+    exclude:
+      - "README.md"
+  loop:
+    - openshift-client-linux.tar.gz
+    - openshift-install-linux.tar.gz
+    - opm-linux.tar.gz
+    - grpcurl_1.8.5_linux_x86_64.tar.gz
+- name: Download ca VMware
+  unarchive:
+    src: "{{ vmware_ca }}"
+    dest: /etc/pki/ca-trust/source/anchors
+    remote_src: True
+    validate_certs: False
+    exclude:
+      - "certs/win/*"
+      - "certs/mac/*"
+    extra_opts:
+      - "-j"
+  ignore_errors: True
+- name: Updata CA
+  shell: update-ca-trust

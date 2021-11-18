@@ -1,0 +1,7 @@
+---
+# tasks file for ocpclient
+- name: Instalar o actualizar clientes
+  include_tasks: "install_client.yml"
+
+- name: Descargar imagenes
+  include_tasks: "download_images.yml"
