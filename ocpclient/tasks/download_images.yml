@@ -35,8 +35,8 @@
   copy:
     src: pull-secret
     dest: /opt/secret
-    owner: "{{ user_owner|root }}"
-    group: "{{ user_owner|root }}"
+    owner: "{{ user_owner | default('root') }}"
+    group: "{{ user_owner | default('root') }}"
   
 - name: Copy mirror version
   shell: "oc adm release mirror -a /opt/secret --from=quay.io/openshift-release-dev/ocp-release:{{ ocp_release }}-x86_64 --to={{ url_nexus }}/ocp4/openshift4 --to-release-image={{ url_nexus }}/ocp4/openshift4:{{ ocp_release }}-x86_64"
