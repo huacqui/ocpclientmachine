@@ -31,6 +31,17 @@
   - '"blob upload invalid: blob upload invalid" not in amq.stderr or amq.rc != 125'
   - amq.rc !=0
 
+- name: Copy pull secret
+  copy:
+    src: secret
+    dest: /opt/secret
+    owner: ansible
+    group: root
+  
+- name: Copy mirror version
+  shell: "oc adm release mirror -a /opt/secret --from=quay.io/openshift-release-dev/ocp-release:{{ ocp_release }}-x86_64 --to={{ url_nexus }}/ocp4/openshift4 --to-release-image={{ url_nexus }}/ocp4/openshift4:{{ ocp_release }}-x86_64"
+  environment: "{{ proxy_env }}"
+
 - name: Copy images efk to nexus
   shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
   environment: "{{ proxy_env }}"
