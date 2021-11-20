@@ -33,7 +33,7 @@
 
 - name: Copy pull secret
   copy:
-    src: secret
+    src: pull-secret
     dest: /opt/secret
     owner: ansible
     group: root
