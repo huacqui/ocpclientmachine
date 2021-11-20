@@ -7,6 +7,13 @@
   shell: "podman login -u {{ user_nexus }} -p {{ pass_nexus }} {{ url_nexus }}"
   environment: "{{ proxy_env }}"
 
+- name: Generate pull secret
+  copy:
+    src: pull-secret
+    dest: /opt/secret
+    owner: "{{ user_owner | default('root') }}"
+    group: "{{ user_owner | default('root') }}"
+
 - name: Generate images efk
   shell: "opm index prune -f registry.redhat.io/redhat/redhat-operator-index:{{ ocp_version }} -p elasticsearch-operator,cluster-logging -t {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }} && podman push {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }}"
   environment: "{{ proxy_env }}"
@@ -31,14 +38,7 @@
   - '"blob upload invalid: blob upload invalid" not in amq.stderr or amq.rc != 125'
   - amq.rc !=0
 
-- name: Copy pull secret
-  copy:
-    src: pull-secret
-    dest: /opt/secret
-    owner: "{{ user_owner | default('root') }}"
-    group: "{{ user_owner | default('root') }}"
-  
-- name: Copy mirror version
+- name: Copy mirror images
   shell: "oc adm release mirror -a /opt/secret --from=quay.io/openshift-release-dev/ocp-release:{{ ocp_release }}-x86_64 --to={{ url_nexus }}/ocp4/openshift4 --to-release-image={{ url_nexus }}/ocp4/openshift4:{{ ocp_release }}-x86_64"
   environment: "{{ proxy_env }}"
 
