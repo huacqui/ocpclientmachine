@@ -10,6 +10,7 @@
     url_nexus: nexus.t.st
     ocp_version: v4.8
     ocp_release: 4.8.12
+    #user_owner:
     proxy_env:
       http_proxy: ""
       https_proxy: ""
