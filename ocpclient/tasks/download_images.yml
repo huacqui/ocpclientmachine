@@ -43,13 +43,13 @@
   environment: "{{ proxy_env }}"
 
 - name: Copy images efk to nexus
-  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
+  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-efk:{{ ocp_version }} {{ url_nexus }}/olmr -a /run/containers/0/containers/auth.json --index-filter-by-os='linux/amd64'"
   environment: "{{ proxy_env }}"
 
 - name: Copy images 3scale to nexus
-  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-3scale:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
+  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-3scale:{{ ocp_version }} {{ url_nexus }}/olmr -a /run/containers/0/containers/auth.json --index-filter-by-os='linux/amd64'"
   environment: "{{ proxy_env }}"
 
 - name: Copy images amq to nexus
-  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-amq:{{ ocp_version }} {{ url_nexus }}/olmr -a ${XDG_RUNTIME_DIR}/containers/auth.json --index-filter-by-os='linux/amd64'"
+  shell: "oc adm catalog mirror {{ url_nexus }}/olm/redhat-operator-index-amq:{{ ocp_version }} {{ url_nexus }}/olmr -a /run/containers/0/containers/auth.json --index-filter-by-os='linux/amd64'"
   environment: "{{ proxy_env }}"
